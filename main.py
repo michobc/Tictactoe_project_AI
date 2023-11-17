@@ -42,7 +42,7 @@ def isTerminalState(board):
                 return False
     return True
 
-
+# eval function = lines where X(or O) can win - lines where O(or X) can win
 def checkVertical(board, play, opp):
     i=0
     res = 0
@@ -163,6 +163,7 @@ def checkDiagonal(board, play, opp):
  
     return res
 
+# Eval function
 def checkAll(board, play, opp):
     return checkVertical(board, play, opp)+ checkHorizontal(board, play, opp) + checkDiagonal(board, play, opp)
 
@@ -189,8 +190,7 @@ class Welcome:
         self.hard_alpha = 255
 
     def draw(self):
-        self.game.screen.fill((255, 255, 255))  # Fill the screen with a white background
-        #Display the background image
+        self.game.screen.fill((255, 255, 255))
         self.game.screen.blit(self.background_image, (0, 0))
         self.game.screen.blit(self.text, self.text_rect)
         pg.draw.rect(self.game.screen, 'blue', self.x_button)
@@ -272,8 +272,6 @@ class TicTacToe:
         self.bot = ''
         self.turn = ''
         self.winner = None
-        self.counter = 0
-        self.counterM = 0
         self.depth = 3
         self.difficulty = 'easy'
 
@@ -283,7 +281,6 @@ class TicTacToe:
         self.game.screen.blit(self.gridImage, (0,0))
         self.draw_objects()
 
-    #with DIFFICULTY
     def run_game_process(self):
         if self.turn == self.player:
             current_cell = vec2(pg.mouse.get_pos()) // CELL_SIZE
@@ -379,11 +376,7 @@ class TicTacToe:
 
 
     def value_medium(self, board, nextAgent, current_depth, alpha, beta):
-        # print(board) 
-        self.counterM += 1
-        # print(self.counterM)
         if current_depth < self.depth :
-            self.counterM += 1 
             if checkWhichMarkWon(self.bot, board):  # Bot wins
                 return 1
             elif checkWhichMarkWon(self.player, board):  # Player wins
@@ -398,12 +391,6 @@ class TicTacToe:
         
         else:
             if current_depth == self.depth:
-                # if checkWhichMarkWon(self.bot, board):  # Bot wins
-                #     return 1
-                # elif checkWhichMarkWon(self.player, board):  # Player wins
-                #     return -1
-                # elif isTerminalState(board):  # Draw
-                #     return 0
                 if self.turn == self.bot:
                     return checkAll(board, self.bot, self.player)
                 else:
@@ -411,17 +398,10 @@ class TicTacToe:
                 
     def max_value_medium(self, board, current_depth, alpha, beta): # X for bot
         v = -2
-        # print(board)
-        # self.counter += 1
-        # print(self.counter)
-
         for i in range(0,3):
             for j in range(0,3):
                 if board[i][j] == ' ':
                     board[i][j] = self.bot
-                    # self.counterM += 1
-                    # print(self.counterM)
-                    # print(board)
                     v = max(v, self.value_medium(board, self.player, current_depth+1, alpha, beta))
                     board[i][j] = ' '  # Revert the move
                     if v > beta:
@@ -431,17 +411,10 @@ class TicTacToe:
 
     def min_value_medium(self, board, current_depth, alpha, beta): # O for player
         v = 2
-        # print(board)
-        # self.counter += 1
-        # print(self.counter)
-
         for i in range(0,3):
             for j in range(0,3):
                 if board[i][j] == ' ':
                     board[i][j] = self.player
-                    # self.counterM += 1
-                    # print(self.counterM)
-                    # print(board)
                     v = min(v, self.value_medium(board, self.bot, current_depth+1, alpha, beta))
                     board[i][j] = ' '  # Revert the move
                     if v < alpha:
@@ -467,10 +440,6 @@ class TicTacToe:
 
     def max_value(self, board, alpha, beta): # X for bot
         v = -2
-        # print(board)
-        # self.counter += 1
-        # print(self.counter)
-
         for i in range(0,3):
             for j in range(0,3):
                 if board[i][j] == ' ':
@@ -484,10 +453,6 @@ class TicTacToe:
 
     def min_value(self, board, alpha, beta): # O for player
         v = 2
-        # print(board)
-        # self.counter += 1
-        # print(self.counter)
-
         for i in range(0,3):
             for j in range(0,3):
                 if board[i][j] == ' ':
@@ -544,8 +509,7 @@ class Game:
             else:
                 self.tictactoe.run()
                 self.check_events()
-                if self.tictactoe.winner is not None:
-                    # Display the winner or draw message
+                if self.tictactoe.winner is not None: # Display the winner or draw message
                     self.draw_winner_message()
             pg.display.update()
 
